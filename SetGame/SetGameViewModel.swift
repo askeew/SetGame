@@ -14,11 +14,11 @@ class SetGameViewModel: ObservableObject {
     var cards: [SetCard] { model.dealtCards }
     
 
-//    // MARK: - Intent(s)
-//    func chooseCard(card: MemoryGame<String>.Card) {
-//        model.choose(card: card)
-//    }
-//
+    // MARK: - Intent(s)
+    func select(_ card: SetCard) {
+        model.select(card)
+    }
+
     func resetGame() {
         model.deal12Cards()
     }

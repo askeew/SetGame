@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ContentView: View {
+struct SetGameView: View {
     @ObservedObject var viewModel: SetGameViewModel
     
     var body: some View {
@@ -16,7 +16,9 @@ struct ContentView: View {
             
             Grid(viewModel.cards) { card in
                 CardView(card: card).onTapGesture {
-                    print(card)
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        viewModel.select(card)
+                    }
                 }
                 .transition(.offset(randomPointOffScreen(for: size)))
                 .padding(5)
@@ -54,22 +56,10 @@ struct ContentView: View {
         let positiveY = Bool.random()
         
         switch (positiveX, positiveY) {
-            case (true, true):
-                let result = CGSize(width: newWidth, height: newHeight)
-                print("positive X Y \(result)")
-                return result
-            case (true, false):
-                let result = CGSize(width: newWidth, height: -1 * newHeight)
-                print("positive X negative Y \(result)")
-                return result
-            case (false, true):
-                let result = CGSize(width: -1 * newWidth, height: newHeight)
-                print("negative X positive Y \(result)")
-                return result
-            case (false, false):
-                let result = CGSize(width: -1 * newWidth, height: -1 * newHeight)
-                print("negative X Y \(result)")
-                return result
+            case (true, true): return CGSize(width: newWidth, height: newHeight)
+            case (true, false): return CGSize(width: newWidth, height: -1 * newHeight)
+            case (false, true): return CGSize(width: -1 * newWidth, height: newHeight)
+            case (false, false): return CGSize(width: -1 * newWidth, height: -1 * newHeight)
         }
     }
 }
@@ -91,9 +81,7 @@ struct CardView: View {
         }
         .numberify(card.no)
         .colorify(card.colour)
-        .cardify()
-        
-        .transition(.scale)
+        .cardify(isSelected: card.isSelected)
     }
     
     @ViewBuilder
@@ -131,7 +119,7 @@ extension Shape {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(viewModel: SetGameViewModel())
+        SetGameView(viewModel: SetGameViewModel())
     }
 }
 

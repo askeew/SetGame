@@ -1,12 +1,18 @@
 import SwiftUI
 
 struct Cardify: ViewModifier {
+
+    var isSelected: Bool
+
+    var shadowRadius: CGFloat { isSelected ? 3 : 8 }
         
+    @ViewBuilder
     func body(content: Content) -> some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: cornerRadius).fill(Color.white).shadow(radius: 6)
-            content//.transition(.scale)
+        RoundedRectangle(cornerRadius: cornerRadius).fill(Color.white).shadow(radius: shadowRadius)
+        if isSelected {
+            RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.orange, lineWidth: edgeLineWidth)
         }
+        content
     }
     
     private let cornerRadius = CGFloat(10)
@@ -47,8 +53,8 @@ struct Numberify: ViewModifier {
 }
 
 extension View {
-    func cardify() -> some View {
-        self.modifier(Cardify())
+    func cardify(isSelected: Bool) -> some View {
+        self.modifier(Cardify(isSelected: isSelected))
     }
     
     func colorify(_ colour: Colour) -> some View {
