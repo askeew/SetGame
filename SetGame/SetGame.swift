@@ -1,33 +1,25 @@
 import Foundation
 
-
-enum No: CaseIterable {
-    case one, two, three
-}
-
-
-enum Symbol: CaseIterable {
-    case diamond, squiggle, oval
-}
-
-enum Shading: CaseIterable {
-    case solid, striped, open
-}
-
-enum Colour: CaseIterable {
-    case red, green, purple
-}
-
 struct SetCard: CustomStringConvertible, Identifiable {
     let no: No
     let symbol: Symbol
     let shading: Shading
     let colour: Colour
     
-    var isSelected = false
+    var selection = Selection.none
     var id: Int
     
-    var description: String { "\(no) \(symbol) \(shading) \(colour) \(isSelected) \(id)"}
+    var description: String { "\(no) \(symbol) \(shading) \(colour) \(selection) \(id)"}
+
+    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
+        if no.match(with: secondCard.no, and: thirdCard.no) &&
+            symbol.match(with: secondCard.symbol, and: thirdCard.symbol) &&
+            shading.match(with: secondCard.shading, and: thirdCard.shading) &&
+            colour.match(with: secondCard.colour, and: thirdCard.colour) {
+            return true
+        }
+        return false
+    }
 }
 
 struct SetGame {
@@ -35,6 +27,23 @@ struct SetGame {
     private (set) var cards = [SetCard]()
     private (set) var dealtCards = [SetCard]()
     
+    var selectedCardsIndices: [Int] {
+        dealtCards.indices.filter { dealtCards[$0].selection != .none }
+    }
+
+    var currentSelection: Selection {
+        if selectedCardsIndices.count == 3 {
+            let currentSelections = selectedCardsIndices.map( { dealtCards[$0].selection } )
+            if currentSelections.allSatisfy( { $0 == .setMatched } ) {
+                return .setMatched
+            }
+            if currentSelections.allSatisfy( { $0 == .setNotMatched } ) {
+                return .setNotMatched
+            }
+        }
+        return .none
+    }
+
     mutating func deal12Cards() {
         var tempCards = [SetCard]()
         var id = 0
@@ -54,11 +63,109 @@ struct SetGame {
     }
 
     mutating func select(_ card: SetCard) {
-        if let chosenIndex = dealtCards.firstIndex(matching: card) {
-            dealtCards[chosenIndex].isSelected.toggle()
+        if currentSelection == .setNotMatched {
+            selectedCardsIndices.forEach({ dealtCards[$0].selection = .none})
+
+            if let chosenIndex = dealtCards.firstIndex(matching: card) {
+                dealtCards[chosenIndex].selection = .selected
+            }
+        } else {
+            if let chosenIndex = dealtCards.firstIndex(matching: card) {
+                if card.selection != .none {
+                    dealtCards[chosenIndex].selection = .none
+                } else {
+                    dealtCards[chosenIndex].selection = .selected
+                }
+            }
         }
+        match()
+    }
+
+    func canSelect(_ card: SetCard) -> Bool {
+        print("\(card.selection) \(selectedCardsIndices.count < 3)")
+        return selectedCardsIndices.count < 3 //|| card.selection != .none
+    }
+
+	mutating func match() {
+		if selectedCardsIndices.count == 3 {
+			print("matching... ")
+
+			let firstCard = dealtCards[selectedCardsIndices[0]]
+			let secondCard = dealtCards[selectedCardsIndices[1]]
+			let thirdCard = dealtCards[selectedCardsIndices[2]]
+			if firstCard.match(with: secondCard, and: thirdCard) {
+				print("match!")
+				selectedCardsIndices.forEach { dealtCards[$0].selection = .setMatched }
+			} else {
+				print("not matched!")
+				selectedCardsIndices.forEach { dealtCards[$0].selection = .setNotMatched }
+			}
+		}
+	}
+
+}
+
+enum No: CaseIterable {
+    case one, two, three
+
+    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
+        if (self == secondCard && self != thirdCard) || (self != secondCard && self == thirdCard) {
+            return false
+        }
+        print("\(self) \(secondCard) \(thirdCard) match")
+        return true
     }
 }
+
+
+enum Symbol: CaseIterable {
+    case diamond, squiggle, oval
+
+    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
+        if (self == secondCard && self != thirdCard) || (self != secondCard && self == thirdCard) {
+            return false
+        }
+        print("\(self) \(secondCard) \(thirdCard) match")
+        return true
+    }
+}
+
+enum Shading: CaseIterable {
+    case solid, striped, open
+
+    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
+        if (self == secondCard && self != thirdCard) || (self != secondCard && self == thirdCard) {
+            return false
+        }
+        print("\(self) \(secondCard) \(thirdCard) match")
+        return true
+    }
+}
+
+enum Colour: CaseIterable {
+    case red, blue, purple
+
+    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
+        if (self == secondCard && self != thirdCard) || (self != secondCard && self == thirdCard) {
+            return false
+        }
+        print("\(self) \(secondCard) \(thirdCard) match")
+        return true
+    }
+}
+
+enum Selection {
+    case none, selected, setMatched, setNotMatched
+
+    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
+        if (self == secondCard && self != thirdCard) || (self != secondCard && self == thirdCard) {
+            return false
+        }
+        print("\(self) \(secondCard) \(thirdCard) match")
+        return true
+    }
+}
+
 
 extension Array {
     var only: Element? { count == 1 ? first : nil }

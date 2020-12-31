@@ -81,7 +81,7 @@ struct CardView: View {
         }
         .numberify(card.no)
         .colorify(card.colour)
-        .cardify(isSelected: card.isSelected)
+        .cardify(with: card.selection)
     }
     
     @ViewBuilder
@@ -93,29 +93,6 @@ struct CardView: View {
         }
     }
 }
-
-extension Shape {
-    
-    var lineWidth: CGFloat { 1 }
-    
-    @ViewBuilder
-    func shader(_ shade: Shading, with colour: Colour) -> some View {
-        switch shade {
-        case .open:
-            ZStack {
-                self.fill(Color.white)
-                self.stroke(lineWidth: lineWidth)
-            }
-        case .solid: self
-        case .striped:
-            Stripes(config: StripesConfig(background: .white, foreground: colour.color, degrees: 0, barWidth: 1, barSpacing: 2))
-                .mask(self)
-            self.stroke(lineWidth: lineWidth)
-        }
-    }
-}
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

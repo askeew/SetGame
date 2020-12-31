@@ -2,21 +2,17 @@ import SwiftUI
 
 struct Cardify: ViewModifier {
 
-    var isSelected: Bool
+    var selection: Selection
 
-    var shadowRadius: CGFloat { isSelected ? 3 : 8 }
+    var shadowRadius: CGFloat { selection != .none ? 3 : 8 }
+    private let cornerRadius = CGFloat(10)
         
     @ViewBuilder
     func body(content: Content) -> some View {
         RoundedRectangle(cornerRadius: cornerRadius).fill(Color.white).shadow(radius: shadowRadius)
-        if isSelected {
-            RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.orange, lineWidth: edgeLineWidth)
-        }
+        RoundedRectangle(cornerRadius: cornerRadius).stroke(selection.color, lineWidth: selection.lineWidth)
         content
     }
-    
-    private let cornerRadius = CGFloat(10)
-    private let edgeLineWidth = CGFloat(0.5)
 }
 
 struct Colourify: ViewModifier {
@@ -25,16 +21,6 @@ struct Colourify: ViewModifier {
         
     func body(content: Content) -> some View {
         content.foregroundColor(colour.color)
-    }
-}
-
-extension Colour {
-    var color: Color {
-        switch self {
-        case .green: return .green
-        case .purple: return .purple
-        case .red: return .red
-        }
     }
 }
 
@@ -53,8 +39,8 @@ struct Numberify: ViewModifier {
 }
 
 extension View {
-    func cardify(isSelected: Bool) -> some View {
-        self.modifier(Cardify(isSelected: isSelected))
+    func cardify(with selection: Selection) -> some View {
+        self.modifier(Cardify(selection: selection))
     }
     
     func colorify(_ colour: Colour) -> some View {
@@ -63,5 +49,55 @@ extension View {
     
     func numberify(_ no: No) -> some View {
         self.modifier(Numberify(no: no))
+    }
+}
+
+extension Shape {
+
+    var lineWidth: CGFloat { 1 }
+
+    @ViewBuilder
+    func shader(_ shade: Shading, with colour: Colour) -> some View {
+        switch shade {
+        case .open:
+            ZStack {
+                self.fill(Color.white)
+                self.stroke(lineWidth: 2)
+            }
+        case .solid: self
+        case .striped:
+            Stripes(config: StripesConfig(background: .white, foreground: colour.color, degrees: 0, barWidth: 1, barSpacing: 2))
+                .mask(self)
+            self.stroke(lineWidth: 0.5)
+        }
+    }
+}
+
+extension Colour {
+    var color: Color {
+        switch self {
+        case .blue: return .blue
+        case .purple: return .purple
+        case .red: return .red
+        }
+    }
+}
+
+extension Selection {
+    var color: Color {
+        switch self {
+        case .none: return .clear
+        case .selected: return .orange
+        case .setMatched: return .green
+        case .setNotMatched: return .red
+        }
+    }
+
+    var lineWidth: CGFloat {
+        switch self {
+        case .none: return 0
+        case .selected: return 0.5
+        case .setMatched, .setNotMatched: return 2
+        }
     }
 }
