@@ -105,65 +105,35 @@ struct SetGame {
 
 }
 
+extension Equatable {
+	func match(with second: Self, and third: Self) -> Bool {
+		if (self == second && self != third) || (self != second && self == third) {
+			return false
+		}
+		print("\(self) \(second) \(third) match")
+		return true
+	}
+}
+
 enum No: CaseIterable {
     case one, two, three
-
-    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
-        if (self == secondCard && self != thirdCard) || (self != secondCard && self == thirdCard) {
-            return false
-        }
-        print("\(self) \(secondCard) \(thirdCard) match")
-        return true
-    }
 }
 
 
 enum Symbol: CaseIterable {
     case diamond, squiggle, oval
-
-    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
-        if (self == secondCard && self != thirdCard) || (self != secondCard && self == thirdCard) {
-            return false
-        }
-        print("\(self) \(secondCard) \(thirdCard) match")
-        return true
-    }
 }
 
 enum Shading: CaseIterable {
     case solid, striped, open
-
-    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
-        if (self == secondCard && self != thirdCard) || (self != secondCard && self == thirdCard) {
-            return false
-        }
-        print("\(self) \(secondCard) \(thirdCard) match")
-        return true
-    }
 }
 
 enum Colour: CaseIterable {
     case red, blue, purple
-
-    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
-        if (self == secondCard && self != thirdCard) || (self != secondCard && self == thirdCard) {
-            return false
-        }
-        print("\(self) \(secondCard) \(thirdCard) match")
-        return true
-    }
 }
 
 enum Selection {
     case none, selected, setMatched, setNotMatched
-
-    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
-        if (self == secondCard && self != thirdCard) || (self != secondCard && self == thirdCard) {
-            return false
-        }
-        print("\(self) \(secondCard) \(thirdCard) match")
-        return true
-    }
 }
 
 
