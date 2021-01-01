@@ -35,13 +35,8 @@ struct SetGameView: View {
 						viewModel.resetGame()
 					}
 				}) {
-					Text("New Game")
-						.font(.headline)
-						.padding()
-						.overlay(
-							RoundedRectangle(cornerRadius: 25)
-								.stroke(lineWidth: 1)
-						)
+                    Image(systemName: "arrow.clockwise.circle.fill")
+                        .font(.system(size: fontSize(for: size)))
 				}
 				Spacer()
 				Button(action:  {
@@ -57,11 +52,15 @@ struct SetGameView: View {
 								.stroke(lineWidth: 1)
 						)
 				}.disabled(viewModel.cardsLeft == 0)
-			}
+            }.padding()
         }.padding()
 		.accentColor(.orange)
     }
-    
+
+    private func fontSize(for size: CGSize) -> CGFloat {
+        min(size.width, size.height) * 0.13
+    }
+
     private func randomPointOffScreen(for screen: CGSize) -> CGSize {
         let width = Int(screen.width)
         let height = Int(screen.height)
