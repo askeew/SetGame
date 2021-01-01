@@ -3,12 +3,13 @@ import SwiftUI
 
 class SetGameViewModel: ObservableObject {
 
-    @Published private var model: SetGame = SetGame()//MemoryGame<String> = MemoryGame<String>()
+    @Published private var model: SetGame = SetGame()
     // Property wrappern @published gör objectWillChange.send() så fort model ändrar sig.
 
     // MARK: -  Access to the model
     var cards: [SetCard] { model.dealtCards }
 	var cardsLeft: Int { model.cardsLeft }
+    var score: Int { model.score }
     
 
     // MARK: - Intent(s)

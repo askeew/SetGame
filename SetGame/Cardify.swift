@@ -3,6 +3,7 @@ import SwiftUI
 struct Cardify: ViewModifier {
 
     var selection: Selection
+    var colour: Colour
 
     var shadowRadius: CGFloat { selection != .none ? 3 : 8 }
     private let cornerRadius = CGFloat(10)
@@ -11,15 +12,6 @@ struct Cardify: ViewModifier {
     func body(content: Content) -> some View {
         RoundedRectangle(cornerRadius: cornerRadius).fill(Color.white).shadow(radius: shadowRadius)
         RoundedRectangle(cornerRadius: cornerRadius).stroke(selection.color, lineWidth: selection.lineWidth)
-        content
-    }
-}
-
-struct Colourify: ViewModifier {
-    
-    var colour: Colour
-        
-    func body(content: Content) -> some View {
         content.foregroundColor(colour.color)
     }
 }
@@ -39,12 +31,8 @@ struct Numberify: ViewModifier {
 }
 
 extension View {
-    func cardify(with selection: Selection) -> some View {
-        self.modifier(Cardify(selection: selection))
-    }
-    
-    func colorify(_ colour: Colour) -> some View {
-        self.modifier(Colourify(colour: colour))
+    func cardify(with selection: Selection, and colour: Colour) -> some View {
+        self.modifier(Cardify(selection: selection, colour: colour))
     }
     
     func numberify(_ no: No) -> some View {

@@ -4,6 +4,7 @@ struct SetGame {
 
 	private (set) var deck: [SetCard]
 	private (set) var dealtCards: [SetCard]
+    private (set) var score = 0
 
 	var cardsLeft: Int { deck.count }
 
@@ -13,7 +14,7 @@ struct SetGame {
 
     var currentSelection: Selection {
         if selectedCardsIndices.count == 3 {
-            let currentSelections = selectedCardsIndices.map( { dealtCards[$0].selection } )
+            let currentSelections = selectedCardsIndices.map { dealtCards[$0].selection }
             if currentSelections.allSatisfy( { $0 == .setMatched } ) {
                 return .setMatched
             }
@@ -30,6 +31,7 @@ struct SetGame {
 	}
 
     mutating func deal12Cards() {
+        score = 0
         deck = [SetCard]()
 		dealtCards = [SetCard]()
         var id = 0
@@ -46,18 +48,29 @@ struct SetGame {
 
 		deck.shuffle()
 
-		for _ in 1...12 {
-			guard !deck.isEmpty else { return }
-			dealtCards.append(deck.removeFirst())
-		}
+        
+        repeater(12) {
+            guard !deck.isEmpty else { return }
+            dealtCards.append(deck.removeFirst())
+        }
     }
 
-	mutating func deal() { // TODO make closure what to do, skicka in 3/12
-		guard !deck.isEmpty else { return }
-		for _ in 1...3 {
+    mutating func deal(reduceScore: Bool = true) { // TODO make closure what to do, skicka in 3/12
+        if reduceScore {
+            score -= 1
+        }
+		
+        repeater(3) {
+            guard !deck.isEmpty else { return }
 			dealtCards.append(deck.removeFirst())
 		}
 	}
+    
+    private func repeater(_ times: Int, action: () -> Void) {
+        for _ in 1...times {
+            action()
+        }
+    }
 
     mutating func choose(_ card: SetCard) {
         if currentSelection == .setNotMatched {
@@ -67,7 +80,7 @@ struct SetGame {
 		} else if currentSelection == .setMatched {
 			removeSelectedCards()
 			select(card)
-			deal()
+			deal(reduceScore: false)
 		} else {
             if let chosenIndex = dealtCards.firstIndex(matching: card) {
                 if card.selection != .none {
@@ -109,9 +122,11 @@ struct SetGame {
 			if firstCard.match(with: secondCard, and: thirdCard) {
 				print("match!")
 				selectedCardsIndices.forEach { dealtCards[$0].selection = .setMatched }
+                score += 3
 			} else {
 				print("not matched!")
 				selectedCardsIndices.forEach { dealtCards[$0].selection = .setNotMatched }
+                score -= 1
 			}
 		}
 	}

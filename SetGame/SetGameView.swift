@@ -12,11 +12,15 @@ struct SetGameView: View {
     @ViewBuilder
     private func body(for size: CGSize) -> some View {
         VStack {
-			Text("Kort kvar: \(viewModel.cardsLeft)")
+            HStack {
+                Text("Kort kvar: \(viewModel.cardsLeft)")
+                Spacer()
+                Text("Poäng: \(viewModel.score)")
+            }.padding().foregroundColor(.orange).font(.system(size: fontSize(for: size), weight: .heavy))
             
             Grid(viewModel.cards) { card in
                 CardView(card: card).onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    withAnimation(.easeInOut(duration: 0.75)) {
                         viewModel.select(card)
                     }
                 }
@@ -25,10 +29,11 @@ struct SetGameView: View {
                 .aspectRatio(2/3, contentMode: .fit)
                 
             }.onAppear {
-                withAnimation(Animation.easeInOut(duration: 2)) {
+                withAnimation(.easeInOut(duration: 2)) {
                     viewModel.resetGame()
                 }
-            }.padding()
+            }
+            
 			HStack {
 				Button(action:  {
 					withAnimation(.easeInOut(duration: 2)) {
@@ -36,7 +41,7 @@ struct SetGameView: View {
 					}
 				}) {
                     Image(systemName: "arrow.clockwise.circle.fill")
-                        .font(.system(size: fontSize(for: size)))
+                        .font(.system(size: imageSize(for: size)))
 				}
 				Spacer()
 				Button(action:  {
@@ -44,21 +49,20 @@ struct SetGameView: View {
 						viewModel.deal()
 					}
 				}) {
-					Text("Tre nya kort")
-						.font(.headline)
-						.padding()
-						.overlay(
-							RoundedRectangle(cornerRadius: 25)
-								.stroke(lineWidth: 1)
-						)
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: imageSize(for: size)))
 				}.disabled(viewModel.cardsLeft == 0)
             }.padding()
         }.padding()
 		.accentColor(.orange)
     }
 
-    private func fontSize(for size: CGSize) -> CGFloat {
+    private func imageSize(for size: CGSize) -> CGFloat {
         min(size.width, size.height) * 0.13
+    }
+    
+    private func fontSize(for size: CGSize) -> CGFloat {
+        min(size.width, size.height) * 0.05
     }
 
     private func randomPointOffScreen(for screen: CGSize) -> CGSize {
@@ -84,24 +88,17 @@ struct CardView: View {
     var card: SetCard
 
     var body: some View {
-        GeometryReader { geometry in            
-            self.body(for: geometry.size)
-        }
-    }
-    
-    private func body(for size: CGSize) -> some View {
         ZStack {
             symbol
         }
         .numberify(card.no)
-        .colorify(card.colour)
-        .cardify(with: card.selection)
+        .cardify(with: card.selection, and: card.colour)
     }
-    
+        
     @ViewBuilder
     var symbol: some View {
         switch card.symbol {
-        case .diamond: Diamond(no: card.no).shader(card.shading, with: card.colour)
+        case .diamond: Diamond().shader(card.shading, with: card.colour)
         case .oval: Oval().shader(card.shading, with: card.colour)
         case .squiggle: Squiggle().shader(card.shading, with: card.colour)
         }
