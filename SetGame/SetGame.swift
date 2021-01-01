@@ -1,32 +1,12 @@
 import Foundation
 
-struct SetCard: CustomStringConvertible, Identifiable {
-    let no: No
-    let symbol: Symbol
-    let shading: Shading
-    let colour: Colour
-    
-    var selection = Selection.none
-    var id: Int
-    
-    var description: String { "\(no) \(symbol) \(shading) \(colour) \(selection) \(id)"}
-
-    func match(with secondCard: Self, and thirdCard: Self) -> Bool {
-        if no.match(with: secondCard.no, and: thirdCard.no) &&
-            symbol.match(with: secondCard.symbol, and: thirdCard.symbol) &&
-            shading.match(with: secondCard.shading, and: thirdCard.shading) &&
-            colour.match(with: secondCard.colour, and: thirdCard.colour) {
-            return true
-        }
-        return false
-    }
-}
-
 struct SetGame {
 
-    private (set) var cards = [SetCard]()
-    private (set) var dealtCards = [SetCard]()
-    
+	private (set) var deck: [SetCard]
+	private (set) var dealtCards: [SetCard]
+
+	var cardsLeft: Int { deck.count }
+
     var selectedCardsIndices: [Int] {
         dealtCards.indices.filter { dealtCards[$0].selection != .none }
     }
@@ -44,49 +24,82 @@ struct SetGame {
         return .none
     }
 
+	init(deck: [SetCard] = [SetCard](), dealtCards: [SetCard] = [SetCard]()) {
+		self.deck = deck
+		self.dealtCards = dealtCards
+	}
+
     mutating func deal12Cards() {
-        var tempCards = [SetCard]()
+        deck = [SetCard]()
+		dealtCards = [SetCard]()
         var id = 0
         for no in No.allCases {
             for symbol in Symbol.allCases {
                 for shading in Shading.allCases {
                     for colour in Colour.allCases {
-                        tempCards.append(SetCard(no: no, symbol: symbol, shading: shading, colour: colour, id: id))
+				deck.append(SetCard(no: no, symbol: symbol, shading: shading, colour: colour, id: id))
                         id += 1
                     }
                 }
             }
         }
-        tempCards.shuffle()
-        dealtCards = Array(tempCards.prefix(12))
-        cards = Array(tempCards.suffix(from: 12))
+
+		deck.shuffle()
+
+		for _ in 1...12 {
+			guard !deck.isEmpty else { return }
+			dealtCards.append(deck.removeFirst())
+		}
     }
 
-    mutating func select(_ card: SetCard) {
-        if currentSelection == .setNotMatched {
-            selectedCardsIndices.forEach({ dealtCards[$0].selection = .none})
+	mutating func deal() { // TODO make closure what to do, skicka in 3/12
+		guard !deck.isEmpty else { return }
+		for _ in 1...3 {
+			dealtCards.append(deck.removeFirst())
+		}
+	}
 
-            if let chosenIndex = dealtCards.firstIndex(matching: card) {
-                dealtCards[chosenIndex].selection = .selected
-            }
-        } else {
+    mutating func choose(_ card: SetCard) {
+        if currentSelection == .setNotMatched {
+			deselectCards()
+			select(card)
+			match()
+		} else if currentSelection == .setMatched {
+			removeSelectedCards()
+			select(card)
+			deal()
+		} else {
             if let chosenIndex = dealtCards.firstIndex(matching: card) {
                 if card.selection != .none {
                     dealtCards[chosenIndex].selection = .none
                 } else {
                     dealtCards[chosenIndex].selection = .selected
                 }
+				match()
             }
         }
-        match()
     }
 
-    func canSelect(_ card: SetCard) -> Bool {
-        print("\(card.selection) \(selectedCardsIndices.count < 3)")
-        return selectedCardsIndices.count < 3 //|| card.selection != .none
-    }
+	mutating private func deselectCards() {
+		selectedCardsIndices.forEach { dealtCards[$0].selection = .none }
+	}
 
-	mutating func match() {
+	mutating private func select(_ card: SetCard) {
+		guard let chosenIndex = dealtCards.firstIndex(matching: card) else { return }
+		dealtCards[chosenIndex].selection = .selected
+	}
+
+	mutating private func removeSelectedCards() {
+		guard selectedCardsIndices.count == 3 else { return }
+		let firstMatch = dealtCards[selectedCardsIndices[0]]
+		let secondMatch = dealtCards[selectedCardsIndices[1]]
+		let thirdMatch = dealtCards[selectedCardsIndices[2]]
+		dealtCards.remove(firstMatch)
+		dealtCards.remove(secondMatch)
+		dealtCards.remove(thirdMatch)
+	}
+
+	mutating private func match() {
 		if selectedCardsIndices.count == 3 {
 			print("matching... ")
 
@@ -102,23 +115,35 @@ struct SetGame {
 			}
 		}
 	}
-
 }
 
-extension Equatable {
-	func match(with second: Self, and third: Self) -> Bool {
-		if (self == second && self != third) || (self != second && self == third) {
-			return false
+struct SetCard: CustomStringConvertible, Identifiable {
+	let no: No
+	let symbol: Symbol
+	let shading: Shading
+	let colour: Colour
+
+	var selection = Selection.none
+	var id: Int
+
+	var description: String { "\(no) \(symbol) \(shading) \(colour) \(selection) \(id)"}
+
+	func match(with secondCard: Self, and thirdCard: Self) -> Bool {
+
+		let matchedNo = no.match(with: secondCard.no, and: thirdCard.no)
+		let matchedSymbol = symbol.match(with: secondCard.symbol, and: thirdCard.symbol)
+		let matchShading = shading.match(with: secondCard.shading, and: thirdCard.shading)
+		let matchColour = colour.match(with: secondCard.colour, and: thirdCard.colour)
+		if matchedNo && matchedSymbol && matchShading && matchColour {
+			return true
 		}
-		print("\(self) \(second) \(third) match")
-		return true
+		return false
 	}
 }
 
 enum No: CaseIterable {
     case one, two, three
 }
-
 
 enum Symbol: CaseIterable {
     case diamond, squiggle, oval
@@ -136,7 +161,17 @@ enum Selection {
     case none, selected, setMatched, setNotMatched
 }
 
-
-extension Array {
-    var only: Element? { count == 1 ? first : nil }
+extension Equatable {
+	func match(with second: Self, and third: Self) -> Bool {
+		// All the same or all different
+		if self == second && self == third {
+			print("Match! All the same \(self) \(second) \(third)")
+			return true
+		} else if self != second && second != third {
+			print("Match! All different \(self) \(second) \(third)")
+			return true
+		}
+		print("Not Matched! \(self) \(second) \(third)")
+		return false
+	}
 }

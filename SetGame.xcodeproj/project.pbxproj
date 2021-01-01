@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6E09F87F259F1BAD005FD955 /* SetGameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E09F87E259F1BAD005FD955 /* SetGameTests.swift */; };
 		6EB55FEB2595D61000BABFDC /* SetGameApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB55FEA2595D61000BABFDC /* SetGameApp.swift */; };
 		6EB55FED2595D61000BABFDC /* SetGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB55FEC2595D61000BABFDC /* SetGameView.swift */; };
 		6EB55FEF2595D61100BABFDC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EB55FEE2595D61100BABFDC /* Assets.xcassets */; };
@@ -22,7 +23,20 @@
 		6EE10A7225965123008BF25B /* Squiggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE10A7125965123008BF25B /* Squiggle.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		6E09F881259F1BAD005FD955 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6EB55FDF2595D61000BABFDC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6EB55FE62595D61000BABFDC;
+			remoteInfo = SetGame;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		6E09F87C259F1BAD005FD955 /* SetGameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SetGameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E09F87E259F1BAD005FD955 /* SetGameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameTests.swift; sourceTree = "<group>"; };
+		6E09F880259F1BAD005FD955 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EB55FE72595D61000BABFDC /* SetGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SetGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EB55FEA2595D61000BABFDC /* SetGameApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameApp.swift; sourceTree = "<group>"; };
 		6EB55FEC2595D61000BABFDC /* SetGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameView.swift; sourceTree = "<group>"; };
@@ -41,6 +55,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6E09F879259F1BAD005FD955 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EB55FE42595D61000BABFDC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -51,10 +72,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6E09F87D259F1BAD005FD955 /* SetGameTests */ = {
+			isa = PBXGroup;
+			children = (
+				6E09F87E259F1BAD005FD955 /* SetGameTests.swift */,
+				6E09F880259F1BAD005FD955 /* Info.plist */,
+			);
+			path = SetGameTests;
+			sourceTree = "<group>";
+		};
 		6EB55FDE2595D61000BABFDC = {
 			isa = PBXGroup;
 			children = (
 				6EB55FE92595D61000BABFDC /* SetGame */,
+				6E09F87D259F1BAD005FD955 /* SetGameTests */,
 				6EB55FE82595D61000BABFDC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -63,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				6EB55FE72595D61000BABFDC /* SetGame.app */,
+				6E09F87C259F1BAD005FD955 /* SetGameTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,6 +131,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6E09F87B259F1BAD005FD955 /* SetGameTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E09F885259F1BAD005FD955 /* Build configuration list for PBXNativeTarget "SetGameTests" */;
+			buildPhases = (
+				6E09F878259F1BAD005FD955 /* Sources */,
+				6E09F879259F1BAD005FD955 /* Frameworks */,
+				6E09F87A259F1BAD005FD955 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6E09F882259F1BAD005FD955 /* PBXTargetDependency */,
+			);
+			name = SetGameTests;
+			productName = SetGameTests;
+			productReference = 6E09F87C259F1BAD005FD955 /* SetGameTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		6EB55FE62595D61000BABFDC /* SetGame */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6EB55FF62595D61100BABFDC /* Build configuration list for PBXNativeTarget "SetGame" */;
@@ -125,6 +175,10 @@
 				LastSwiftUpdateCheck = 1230;
 				LastUpgradeCheck = 1230;
 				TargetAttributes = {
+					6E09F87B259F1BAD005FD955 = {
+						CreatedOnToolsVersion = 12.3;
+						TestTargetID = 6EB55FE62595D61000BABFDC;
+					};
 					6EB55FE62595D61000BABFDC = {
 						CreatedOnToolsVersion = 12.3;
 					};
@@ -144,11 +198,19 @@
 			projectRoot = "";
 			targets = (
 				6EB55FE62595D61000BABFDC /* SetGame */,
+				6E09F87B259F1BAD005FD955 /* SetGameTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6E09F87A259F1BAD005FD955 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EB55FE52595D61000BABFDC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -161,6 +223,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6E09F878259F1BAD005FD955 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E09F87F259F1BAD005FD955 /* SetGameTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EB55FE32595D61000BABFDC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -181,7 +251,53 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		6E09F882259F1BAD005FD955 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6EB55FE62595D61000BABFDC /* SetGame */;
+			targetProxy = 6E09F881259F1BAD005FD955 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		6E09F883259F1BAD005FD955 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SetGameTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = se.indy.SetGameTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SetGame.app/SetGame";
+			};
+			name = Debug;
+		};
+		6E09F884259F1BAD005FD955 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SetGameTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = se.indy.SetGameTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SetGame.app/SetGame";
+			};
+			name = Release;
+		};
 		6EB55FF42595D61100BABFDC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -343,6 +459,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6E09F885259F1BAD005FD955 /* Build configuration list for PBXNativeTarget "SetGameTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E09F883259F1BAD005FD955 /* Debug */,
+				6E09F884259F1BAD005FD955 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		6EB55FE22595D61000BABFDC /* Build configuration list for PBXProject "SetGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

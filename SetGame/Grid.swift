@@ -40,4 +40,12 @@ extension Array where Element: Identifiable {
         }
         return nil
     }
+
+	@discardableResult
+	mutating func remove(_ matching: Element) -> Element? {
+		if let index = indices.filter({ self[$0].id == matching.id }).first {
+			return remove(at: index)
+		}
+		return nil
+	}
 }

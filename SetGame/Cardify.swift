@@ -96,8 +96,8 @@ extension Selection {
     var lineWidth: CGFloat {
         switch self {
         case .none: return 0
-        case .selected: return 0.5
-        case .setMatched, .setNotMatched: return 2
+        case .selected: return 2
+        case .setMatched, .setNotMatched: return 4
         }
     }
 }

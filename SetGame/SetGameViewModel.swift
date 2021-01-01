@@ -5,38 +5,24 @@ class SetGameViewModel: ObservableObject {
 
     @Published private var model: SetGame = SetGame()//MemoryGame<String> = MemoryGame<String>()
     // Property wrappern @published gör objectWillChange.send() så fort model ändrar sig.
-    
-//    init() {
-//        model = SetGame()
-//    }
-    
+
     // MARK: -  Access to the model
     var cards: [SetCard] { model.dealtCards }
+	var cardsLeft: Int { model.cardsLeft }
     
 
     // MARK: - Intent(s)
     func select(_ card: SetCard) {
-        model.select(card)
+        model.choose(card)
     }
 
     func resetGame() {
         model.deal12Cards()
     }
-    
-//    func deal12Cards() {
-//
-//    }
-    
-    
-    //func compareThing1<T: Identifiable>(_ thing1: T, against thing2: T) -> Bool {
- 
-//    func toShape<S: Shape>(from symbol: S) -> S {
-//        switch symbol {
-//        case .diamond: return Diamond()
-//        case .oval: return Oval()
-//        case .squiggle: return Squiggle()
-//        }
-//    }
+
+	func deal() {
+		model.deal()
+	}
 }
 
 struct SetGameViewModel_Previews: PreviewProvider {

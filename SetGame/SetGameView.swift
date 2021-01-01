@@ -12,7 +12,7 @@ struct SetGameView: View {
     @ViewBuilder
     private func body(for size: CGSize) -> some View {
         VStack {
-            Text("Set Game")
+			Text("Kort kvar: \(viewModel.cardsLeft)")
             
             Grid(viewModel.cards) { card in
                 CardView(card: card).onTapGesture {
@@ -29,22 +29,37 @@ struct SetGameView: View {
                     viewModel.resetGame()
                 }
             }.padding()
-            
-            Button(action:  {
-                withAnimation(.easeInOut(duration: 2)) {
-                    viewModel.resetGame()
-                }
-            }) {
-                Text("New Game")
-                    .font(.headline)
-                    .padding()
-                    .foregroundColor(.orange)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 25)
-                            .stroke(Color.orange, lineWidth: 1)
-                    )
-            }
+			HStack {
+				Button(action:  {
+					withAnimation(.easeInOut(duration: 2)) {
+						viewModel.resetGame()
+					}
+				}) {
+					Text("New Game")
+						.font(.headline)
+						.padding()
+						.overlay(
+							RoundedRectangle(cornerRadius: 25)
+								.stroke(lineWidth: 1)
+						)
+				}
+				Spacer()
+				Button(action:  {
+					withAnimation(.easeInOut(duration: 2)) {
+						viewModel.deal()
+					}
+				}) {
+					Text("Tre nya kort")
+						.font(.headline)
+						.padding()
+						.overlay(
+							RoundedRectangle(cornerRadius: 25)
+								.stroke(lineWidth: 1)
+						)
+				}.disabled(viewModel.cardsLeft == 0)
+			}
         }.padding()
+		.accentColor(.orange)
     }
     
     private func randomPointOffScreen(for screen: CGSize) -> CGSize {
