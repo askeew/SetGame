@@ -13,9 +13,11 @@ struct SetGameView: View {
     private func body(for size: CGSize) -> some View {
         VStack {
             HStack {
-                Text("Kort kvar: \(viewModel.cardsLeft)")
+                Image(systemName: "rectangle.stack").font(.system(size: imageSize(for: size)))
+                Text("\(viewModel.cardsLeft)")
                 Spacer()
-                Text("Poäng: \(viewModel.score)")
+                Image(systemName: "sum").font(.system(size: imageSize(for: size)))
+                Text("\(viewModel.score)")
             }.padding().foregroundColor(.orange).font(.system(size: fontSize(for: size), weight: .heavy))
             
             Grid(viewModel.cards) { card in
