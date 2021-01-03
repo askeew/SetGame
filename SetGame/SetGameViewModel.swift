@@ -10,6 +10,7 @@ class SetGameViewModel: ObservableObject {
     var cards: [SetCard] { model.dealtCards }
 	var cardsLeft: Int { model.cardsLeft }
     var score: Int { model.score }
+    func cheat() -> Bool { model.cheatSelectASetCard() }
     
 
     // MARK: - Intent(s)

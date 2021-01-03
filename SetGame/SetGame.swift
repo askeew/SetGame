@@ -5,30 +5,21 @@ struct SetGame {
 	private (set) var deck: [SetCard]
 	private (set) var dealtCards: [SetCard]
     private (set) var score = 0
-
 	var cardsLeft: Int { deck.count }
-
-    var selectedCardsIndices: [Int] {
-        dealtCards.indices.filter { dealtCards[$0].selection != .none }
-    }
-
-    var currentSelection: Selection {
-        if selectedCardsIndices.count == 3 {
-            let currentSelections = selectedCardsIndices.map { dealtCards[$0].selection }
-            if currentSelections.allSatisfy( { $0 == .setMatched } ) {
-                return .setMatched
-            }
-            if currentSelections.allSatisfy( { $0 == .setNotMatched } ) {
-                return .setNotMatched
-            }
-        }
-        return .none
-    }
-
+    
 	init(deck: [SetCard] = [SetCard](), dealtCards: [SetCard] = [SetCard]()) {
 		self.deck = deck
 		self.dealtCards = dealtCards
 	}
+    
+    private var scoring: Int {
+        switch dealtCards.count {
+        case 12: return 10
+        case 15: return 5
+        case 18: return 2
+        default: return 1
+        }
+    }
 
     mutating func deal12Cards() {
         score = 0
@@ -53,43 +44,96 @@ struct SetGame {
             guard !deck.isEmpty else { return }
             dealtCards.append(deck.removeFirst())
         }
+        
+        currentMatch()
+    }
+    
+    @discardableResult
+    private func currentMatch() -> [SetCard] {
+        for first in dealtCards {
+            for second in dealtCards {
+                for third in dealtCards {
+                    if first != second && second != third && first != third {
+                        if first.match(with: second, and: third) {
+                            print("matchExists \([first, second, third])")
+                            return [first, second, third]
+                        }
+                    }
+                }
+            }
+        }
+        print("matchExists false")
+        return []
+    }
+    
+    mutating func cheatSelectASetCard() -> Bool {
+        guard !currentMatch().isEmpty else { return false }
+        if currentMatch()[0].selection == .none {
+            choose(currentMatch()[0])
+        } else if currentMatch()[1].selection == .none {
+            choose(currentMatch()[1])
+        } else {
+            choose(currentMatch()[2])
+        }
+        return true
     }
 
     mutating func deal(reduceScore: Bool = true) { // TODO make closure what to do, skicka in 3/12
         if reduceScore {
-            score -= 1
+            if !currentMatch().isEmpty {
+                score -= scoring
+            }
         }
 		
         repeater(3) {
             guard !deck.isEmpty else { return }
 			dealtCards.append(deck.removeFirst())
 		}
+        
+        currentMatch()
 	}
     
-    private func repeater(_ times: Int, action: () -> Void) {
-        for _ in 1...times {
-            action()
-        }
-    }
-
     mutating func choose(_ card: SetCard) {
         if currentSelection == .setNotMatched {
-			deselectCards()
-			select(card)
-			match()
-		} else if currentSelection == .setMatched {
-			removeSelectedCards()
-			select(card)
-			deal(reduceScore: false)
-		} else {
+            deselectCards()
+            select(card)
+            match()
+        } else if currentSelection == .setMatched {
+            removeSelectedCards()
+            select(card)
+            deal(reduceScore: false)
+        } else {
             if let chosenIndex = dealtCards.firstIndex(matching: card) {
                 if card.selection != .none {
                     dealtCards[chosenIndex].selection = .none
                 } else {
                     dealtCards[chosenIndex].selection = .selected
                 }
-				match()
+                match()
             }
+        }
+    }
+    
+    private var selectedCardsIndices: [Int] {
+        dealtCards.indices.filter { dealtCards[$0].selection != .none }
+    }
+    
+    private var currentSelection: Selection {
+        if selectedCardsIndices.count == 3 {
+            let currentSelections = selectedCardsIndices.map { dealtCards[$0].selection }
+            if currentSelections.allSatisfy( { $0 == .setMatched } ) {
+                return .setMatched
+            }
+            if currentSelections.allSatisfy( { $0 == .setNotMatched } ) {
+                return .setNotMatched
+            }
+        }
+        return .none
+    }
+    
+    private func repeater(_ times: Int, action: () -> Void) {
+        for _ in 1...times {
+            action()
         }
     }
 
@@ -122,17 +166,17 @@ struct SetGame {
 			if firstCard.match(with: secondCard, and: thirdCard) {
 				print("match!")
 				selectedCardsIndices.forEach { dealtCards[$0].selection = .setMatched }
-                score += 3
+                score += scoring
 			} else {
 				print("not matched!")
 				selectedCardsIndices.forEach { dealtCards[$0].selection = .setNotMatched }
-                score -= 1
+                score -= scoring
 			}
 		}
 	}
 }
 
-struct SetCard: CustomStringConvertible, Identifiable {
+struct SetCard: CustomStringConvertible, Identifiable, Equatable {
 	let no: No
 	let symbol: Symbol
 	let shading: Shading
@@ -182,7 +226,7 @@ extension Equatable {
 		if self == second && self == third {
 			print("Match! All the same \(self) \(second) \(third)")
 			return true
-		} else if self != second && second != third {
+		} else if self != second && second != third && self != third {
 			print("Match! All different \(self) \(second) \(third)")
 			return true
 		}
