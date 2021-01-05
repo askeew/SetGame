@@ -6,20 +6,13 @@ struct SetGame {
 	private (set) var dealtCards: [SetCard]
     private (set) var score = 0
 	var cardsLeft: Int { deck.count }
+    var disableHelp: Bool { helpCounter == 3 }
+    private var helpCounter = 0
     
 	init(deck: [SetCard] = [SetCard](), dealtCards: [SetCard] = [SetCard]()) {
 		self.deck = deck
 		self.dealtCards = dealtCards
 	}
-    
-    private var scoring: Int {
-        switch dealtCards.count {
-        case 12: return 10
-        case 15: return 5
-        case 18: return 2
-        default: return 1
-        }
-    }
 
     mutating func deal12Cards() {
         score = 0
@@ -46,28 +39,11 @@ struct SetGame {
         }
         
         currentMatch()
+        helpCounter = 0
     }
-    
-    @discardableResult
-    private func currentMatch() -> [SetCard] {
-        for first in dealtCards {
-            for second in dealtCards {
-                for third in dealtCards {
-                    if first != second && second != third && first != third {
-                        if first.match(with: second, and: third) {
-                            print("matchExists \([first, second, third])")
-                            return [first, second, third]
-                        }
-                    }
-                }
-            }
-        }
-        print("matchExists false")
-        return []
-    }
-    
-    mutating func cheatSelectASetCard() -> Bool {
-        guard !currentMatch().isEmpty else { return false }
+            
+    mutating func cheatSelectASetCard() {
+        guard !currentMatch().isEmpty else { return }
         if currentMatch()[0].selection == .none {
             choose(currentMatch()[0])
         } else if currentMatch()[1].selection == .none {
@@ -75,10 +51,10 @@ struct SetGame {
         } else {
             choose(currentMatch()[2])
         }
-        return true
+        helpCounter += 1
     }
 
-    mutating func deal(reduceScore: Bool = true) { // TODO make closure what to do, skicka in 3/12
+    mutating func deal(reduceScore: Bool = true) {
         if reduceScore {
             if !currentMatch().isEmpty {
                 score -= scoring
@@ -113,7 +89,34 @@ struct SetGame {
             }
         }
     }
-    
+
+    @discardableResult
+    private func currentMatch() -> [SetCard] {
+        for first in dealtCards {
+            for second in dealtCards {
+                for third in dealtCards {
+                    if first != second && second != third && first != third {
+                        if first.match(with: second, and: third) {
+                            print("matchExists \([first, second, third])")
+                            return [first, second, third]
+                        }
+                    }
+                }
+            }
+        }
+        print("matchExists false")
+        return []
+    }
+
+    private var scoring: Int {
+        switch dealtCards.count {
+        case 12: return 10
+        case 15: return 5
+        case 18: return 2
+        default: return 1
+        }
+    }
+
     private var selectedCardsIndices: [Int] {
         dealtCards.indices.filter { dealtCards[$0].selection != .none }
     }
@@ -224,13 +227,13 @@ extension Equatable {
 	func match(with second: Self, and third: Self) -> Bool {
 		// All the same or all different
 		if self == second && self == third {
-			print("Match! All the same \(self) \(second) \(third)")
+//			print("Match! All the same \(self) \(second) \(third)")
 			return true
 		} else if self != second && second != third && self != third {
-			print("Match! All different \(self) \(second) \(third)")
+//			print("Match! All different \(self) \(second) \(third)")
 			return true
 		}
-		print("Not Matched! \(self) \(second) \(third)")
+//		print("Not Matched! \(self) \(second) \(third)")
 		return false
 	}
 }

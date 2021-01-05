@@ -2,7 +2,6 @@ import SwiftUI
 
 struct SetGameView: View {
     @ObservedObject var viewModel: SetGameViewModel
-    @State var helpCounter = 0
     
     var body: some View {
         GeometryReader { geometry in
@@ -41,7 +40,6 @@ struct SetGameView: View {
 				Button(action:  {
 					withAnimation(.easeInOut(duration: 2)) {
 						viewModel.resetGame()
-                        helpCounter = 0
 					}
 				}) {
                     Image(systemName: "arrow.clockwise.circle.fill")
@@ -50,14 +48,12 @@ struct SetGameView: View {
                 Spacer()
                 Button(action:  {
                     withAnimation(.easeInOut(duration: 2)) {
-                        if viewModel.cheat() {
-                            helpCounter += 1
-                        }
+                        viewModel.cheat()
                     }
                 }) {
                     Image(systemName: "questionmark.circle")
                         .font(.system(size: imageSize(for: size)))
-                }.disabled(helpCounter == 3)
+                }.disabled(viewModel.disableHelp)
                 Spacer()
 				Button(action:  {
 					withAnimation(.easeInOut(duration: 2)) {
