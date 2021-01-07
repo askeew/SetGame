@@ -43,7 +43,10 @@ struct SetGame {
     }
             
     mutating func cheatSelectASetCard() {
-        guard !currentMatch().isEmpty else { return }
+        guard !currentMatch().isEmpty else {
+            deal(reduceScore: false)
+            return
+        }
         if currentMatch()[0].selection == .none {
             choose(currentMatch()[0])
         } else if currentMatch()[1].selection == .none {
